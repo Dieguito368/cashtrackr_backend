@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import Budget from '../models/Budget';
+import Expense from '../models/Expense';
 
 export class BudgetController {
     static getAllBudgets = async (req: Request, res: Response) => {
@@ -16,7 +17,7 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al obtener los presupuestos: ${error.mesage}` });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
         }
     }
 
@@ -36,75 +37,44 @@ export class BudgetController {
     
     static getBudgetById = async (req: Request, res: Response) => {
         try {
-            const { id } = req.params;
-
-            const budget = await Budget.findByPk(id);
-
-            if(!budget) {
-                const error = new Error('Presupuesto no encontrado');
-
-                res.status(404).json({ ok: false, message: error.message });
-
-                return;
-            }
-
-            res.status(200).send({ ok: true, budget })
-        } catch (error) {
-            console.log({ error: `Error al obtener el presupuesto: ${error.mesage}` });
+            const budget = await Budget.findByPk(req.budget.id, {
+                include: [ Expense ]
+            });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: true, budget });
+        } catch (error) {
+            console.log({ error: `Error al obtener el full presupuesto: ${error.mesage}` });
+                
+            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })        
         }
     }
 
     static updateBudget = async (req: Request, res: Response) => {
         try {
-            const { id } = req.params;
-            const { name, ammount } = req.body;
+            const { name, amount } = req.body;
 
-            const budget = await Budget.findByPk(id);
-            
-            if(!budget) {
-                const error = new Error('Presupuesto no encontrado');
+            req.budget.name = name;
+            req.budget.amount = amount;
 
-                res.status(404).json({ ok: false, message: error.message });
-
-                return;
-            }
-
-            budget.name = name;
-            budget.ammount = ammount;
-
-            await budget.save();
+            await req.budget.save();
 
             res.status(200).send({ ok: true, message: 'Presupuesto actualizado correctamente' })
         } catch (error) {
             console.log({ error: `Error al actualizar el presupuesto: ${error.mesage}` });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
         }
     }
 
     static deleteBudget = async (req: Request, res: Response) => {
         try {
-            const { id } = req.params;
-
-            const budget = await Budget.findByPk(id);
-            
-            if(!budget) {
-                const error = new Error('Presupuesto no encontrado');
-
-                res.status(404).json({ ok: false, message: error.message });
-
-                return;
-            }
-
-            await budget.destroy();
+            await req.budget.destroy();
 
             res.status(200).send({ ok: true, message: 'Presupuesto eliminado correctamente' })
         } catch (error) {
             console.log({ error: `Error al eliminar el presupuesto: ${error.mesage}` });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
         }
     }
 }

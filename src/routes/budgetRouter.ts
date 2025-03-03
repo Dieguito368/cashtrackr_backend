@@ -1,38 +1,42 @@
 import { Router } from "express";
 import { BudgetController } from "../controllers/BudgetController";
-import { body, param } from 'express-validator';
-import { handleInputErrors } from "../middleware/validation";
-import { validateParameterBudgetId } from "../middleware/budget";
+import { ExpenseController } from "../controllers/ExpenseController";
+import { validateParameterBudgetId, validateBodyBudgetFields, validateBudgetExist } from "../middleware/budget";
+import { validateBodyExpenseFields } from "../middleware/expense";
 
 const router = Router();
 
+
+router.param('budgetId', validateParameterBudgetId);
+router.param('budgetId', validateBudgetExist);
+
 router.get('/', BudgetController.getAllBudgets);
-router.post('/', 
-    body('name').notEmpty().withMessage('El nombre del presupuesto no puede ir vacio'),
-    body('ammount')
-        .notEmpty().withMessage('La cantidad del presupuesto no puede ir vacio')
-        .isNumeric().withMessage('La cantidad del presupuesto debe ser un número')
-        .custom(value => value > 0).withMessage('La cantidad del presupuesto debe ser mayor a 0'),
-    handleInputErrors,
+
+router.post('/',
+    validateBodyBudgetFields,
     BudgetController.createBudget
 );
-router.get('/:id', 
-    validateParameterBudgetId,
-    BudgetController.getBudgetById
-);
-router.put('/:id', 
-    validateParameterBudgetId,
-    body('name').notEmpty().withMessage('El nombre del presupuesto no puede ir vacio'),
-    body('ammount')
-        .notEmpty().withMessage('La cantidad del presupuesto no puede ir vacio')
-        .isNumeric().withMessage('La cantidad del presupuesto debe ser un número')
-        .custom(value => value > 0).withMessage('La cantidad del presupuesto debe ser mayor a 0'),
-    handleInputErrors,
+
+router.get('/:budgetId', BudgetController.getBudgetById);
+
+router.put('/:budgetId', 
+    validateBodyBudgetFields,
     BudgetController.updateBudget
 );
-router.delete('/:id', 
-    validateParameterBudgetId,
-    BudgetController.deleteBudget
+
+router.delete('/:budgetId', BudgetController.deleteBudget);
+
+
+/** Routes for expenses **/
+router.post('/:budgetId/expenses', 
+    validateBodyExpenseFields, 
+    ExpenseController.createExpense
 );
+
+router.get('/:budgetId/expenses/:expenseId:', ExpenseController.getExpenseById);
+
+router.put('/:budgetId/expenses/:expenseId', ExpenseController.updateExpense);
+
+router.delete('/:budgetId/expenses/:expenseId', ExpenseController.deleteExpense);
 
 export default router;
