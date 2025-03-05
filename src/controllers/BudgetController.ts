@@ -13,11 +13,11 @@ export class BudgetController {
                 // TODO: Filtrar por el usuario autenticado
             });
             
-            res.status(200).send({ ok: true, budgets })
+            res.status(200).send({ ok: true, budgets });
         } catch (error) {
             console.log({ error: `Error al obtener los presupuestos: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -27,11 +27,11 @@ export class BudgetController {
 
             await budget.save();
             
-            res.status(201).send({ ok: true, mesage: 'Presupuesto creado correctamente' })
+            res.status(201).send({ ok: true, mesage: 'Presupuesto creado correctamente' });
         } catch (error) {
             console.log({ error: `Error al crear el presupuesto: ${error.mesage}` });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
     
@@ -45,24 +45,19 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al obtener el full presupuesto: ${error.mesage}` });
                 
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })        
+            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });  
         }
     }
 
     static updateBudget = async (req: Request, res: Response) => {
         try {
-            const { name, amount } = req.body;
+            await req.budget.update(req.body);
 
-            req.budget.name = name;
-            req.budget.amount = amount;
-
-            await req.budget.save();
-
-            res.status(200).send({ ok: true, message: 'Presupuesto actualizado correctamente' })
+            res.status(200).send({ ok: true, message: 'Presupuesto actualizado correctamente' });
         } catch (error) {
             console.log({ error: `Error al actualizar el presupuesto: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -70,11 +65,11 @@ export class BudgetController {
         try {
             await req.budget.destroy();
 
-            res.status(200).send({ ok: true, message: 'Presupuesto eliminado correctamente' })
+            res.status(200).send({ ok: true, message: 'Presupuesto eliminado correctamente' });
         } catch (error) {
             console.log({ error: `Error al eliminar el presupuesto: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })
+            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 }

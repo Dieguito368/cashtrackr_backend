@@ -41,7 +41,7 @@ export const validateBodyBudgetFields = async (req: Request, res: Response, next
     next();
 } 
 
-export const validateBudgetExist = async (req: Request, res: Response, next: NextFunction) => {
+export const validateBudgetExists = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { budgetId } = req.params;
 
