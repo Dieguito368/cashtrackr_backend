@@ -17,7 +17,7 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al obtener los presupuestos: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -31,7 +31,7 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al crear el presupuesto: ${error.mesage}` });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
     
@@ -45,7 +45,7 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al obtener el full presupuesto: ${error.mesage}` });
                 
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });  
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });  
         }
     }
 
@@ -57,7 +57,7 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al actualizar el presupuesto: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -69,7 +69,7 @@ export class BudgetController {
         } catch (error) {
             console.log({ error: `Error al eliminar el presupuesto: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 }

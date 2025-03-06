@@ -14,7 +14,7 @@ export class ExpenseController {
         } catch (error) {
             console.log({ error: `Error al crear el gasto: ${error.mesage}` });
             
-            res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
   
@@ -30,7 +30,7 @@ export class ExpenseController {
         } catch (error) {
             console.log({ error: `Error al actualizar el gasto: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
   
@@ -42,7 +42,7 @@ export class ExpenseController {
         } catch (error) {
             console.log({ error: `Error al eliminar el gasto: ${error.mesage}` });
             
-            res.status(200).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
         }
     }
 }

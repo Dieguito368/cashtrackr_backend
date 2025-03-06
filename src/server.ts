@@ -8,13 +8,12 @@ const app = express();
 
 connectDB();
 
+app.use(morgan('dev'));
+
 app.use(express.json());
 
 app.use('/api/budgets', budgetRouter);
 app.use('/api/auth', authRouter);
-
-app.use(morgan('dev'));
-
 
 
 export default app;
