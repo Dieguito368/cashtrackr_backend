@@ -1,9 +1,11 @@
 import type { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { hashPassword, checkPassword } from '../utils/auth';
 import { generateToken } from '../utils/token';
 import { AuthEmail } from '../emails/AuthEmail';
 import { generateJWT } from '../utils/jwt';
+import { sendErrorResponse } from '../utils';
 
 export class AuthController {
     static createAccount = async (req: Request, res: Response) => {
@@ -31,11 +33,11 @@ export class AuthController {
 
             await user.save();
 
-            res.status(201).send({ ok: true, message: "Cuenta creada correctamente" });
+            res.status(201).json({ ok: true, message: "Cuenta creada correctamente" });
         } catch (error) {
             console.log({ message: 'Error al crear la cuenta del usuario', error });
             
-            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -49,6 +51,7 @@ export class AuthController {
                 const error = new Error('Token no válido');
 
                 res.status(401).json({ ok: false, message: error.message });
+
                 return;
             }
 
@@ -57,11 +60,11 @@ export class AuthController {
 
             await user.save();
 
-            res.status(200).send({ ok: true, message: 'Cuenta confirmada correctamente' });
+            res.status(200).json({ ok: true, message: 'Cuenta confirmada correctamente' });
         } catch (error) {
             console.log({ message: 'Error al confirmar la cuenta del usuario', error });
             
-            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -97,11 +100,11 @@ export class AuthController {
                 return;
             }
 
-            res.status(200).send({ ok: true, token: generateJWT(user.id) });
+            res.status(200).json({ ok: true, token: generateJWT(user.id) });
         } catch (error) {
             console.log({ message: 'Error al loguear al usuario', error });
             
-            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -137,11 +140,11 @@ export class AuthController {
                 token: user.token
             });
 
-            res.status(200).send({ ok: true, message: "Revisa tu correo y restablece la contraseña" });
+            res.status(200).json({ ok: true, message: "Revisa tu correo y restablece la contraseña" });
         } catch (error) {
             console.log({ message: 'Error al recuperar la contraseña del usuario', error });
             
-            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
         }
     }
     
@@ -159,11 +162,11 @@ export class AuthController {
                 return;
             }
 
-            res.status(200).send({ ok: true, message: "Token válido" });
+            res.status(200).json({ ok: true, message: "Token válido" });
         } catch (error) {
             console.log({ message: 'Error al recuperar la contraseña del usuario', error });
             
-            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
         }
     }
 
@@ -187,11 +190,59 @@ export class AuthController {
 
             await user.save();
 
-            res.status(200).send({ ok: true, message: "Contraseña reseteada correctamente" });
+            res.status(200).json({ ok: true, message: "Contraseña reseteada correctamente" });
         } catch (error) {
             console.log({ message: 'Error al resetear la contraseña del usuario', error });
             
-            res.status(500).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
         }
     }
-} 
+    
+    static getUser = (req: Request, res: Response) => {
+        res.status(200).json({ ok: true, user: req.user });
+    }
+
+    static updateCurrentUserPassworrd = async (req: Request, res: Response) => {
+        try {
+            const { current_password: currentPassword, new_password: newPassword } = req.body;
+
+            const user = await User.findByPk(req.user.id);
+
+            if(!user) sendErrorResponse(res, 401, 'No autorizado');
+
+            const isPasswordCorrect = await checkPassword(currentPassword, user.password);
+
+            if(!isPasswordCorrect) return sendErrorResponse(res, 401, "La contraseña actual es incorrecta");
+
+            user.password = await hashPassword(newPassword);
+
+            await user.save();
+
+            res.status(200).json({ ok: true, user: "Contraseña actualizada correctamente" });
+        } catch (error) {
+            console.log({ message: 'Error al actualizar la contraseña del usuario', error });
+            
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+        }
+    }
+
+    static checkPassword = async (req: Request, res: Response) => {
+        try {
+            const { current_password: currentPassword } = req.body;
+
+            const user = await User.findByPk(req.user.id);
+
+            if(!user) sendErrorResponse(res, 401, 'No autorizado');
+
+            const isPasswordCorrect = await checkPassword(currentPassword, user.password);
+
+            if(!isPasswordCorrect) return sendErrorResponse(res, 401, "La contraseña actual es incorrecta");
+
+            res.status(200).json({ ok: true, message: "La contraseña actual es correcta" });
+        } catch (error) {
+            console.log({ message: 'Error al actualizar la contraseña del usuario', error });
+            
+            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+        }
+    }
+}

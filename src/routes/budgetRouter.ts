@@ -3,9 +3,12 @@ import { BudgetController } from "../controllers/BudgetController";
 import { ExpenseController } from "../controllers/ExpenseController";
 import { validateParameterBudgetId, validateBodyBudgetFields, validateBudgetExists } from "../middleware/budget";
 import { validateBodyExpenseFields, validateExpenseExists, validateParameterExpenseId } from "../middleware/expense";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
+
+router.use(authenticate);
 
 router.param('budgetId', validateParameterBudgetId);
 router.param('budgetId', validateBudgetExists);

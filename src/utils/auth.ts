@@ -7,4 +7,4 @@ export const hashPassword = async (password: User['password']) => {
     return await bycript.hash(password, salt); 
 }
 
-export const checkPassword = async (passwordEntered: User['password'], passwordHashed: User['password']) => await bycript.compare(passwordEntered, passwordHashed);
+export const checkPassword =  async (passwordEntered: User['password'], passwordHashed: User['password']) => await bycript.compare(passwordEntered, passwordHashed);
