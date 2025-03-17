@@ -12,7 +12,7 @@ export class BudgetController {
             
             res.status(200).json({ ok: true, budgets });
         } catch (error) {
-            console.log({ message: 'Error al obtener los presupuestos', error });
+            // console.log({ message: 'Error al obtener los presupuestos', error });
             
             res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' });
         }
@@ -20,7 +20,7 @@ export class BudgetController {
 
     static createBudget = async (req: Request, res: Response) => {
         try {
-            const budget = new Budget(req.body);
+            const budget = await Budget.create(req.body);
 
             budget.userId = req.user.id; 
 
@@ -28,7 +28,7 @@ export class BudgetController {
             
             res.status(201).json({ ok: true, message: 'Presupuesto creado correctamente' });
         } catch (error) {
-            console.log({ error: `Error al crear el presupuesto: ${error.message}` });
+            // console.log({ message: "Error al crear el presupuesto", error });
             
             res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' });
         }
@@ -42,7 +42,7 @@ export class BudgetController {
             
             res.status(200).json({ ok: true, budget });
         } catch (error) {
-            console.log({ error: `Error al obtener el full presupuesto: ${error.message}` });
+            // console.log({ message: "Error al obtener el full presupuesto", error });
                 
             res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' });  
         }
@@ -54,7 +54,7 @@ export class BudgetController {
 
             res.status(200).json({ ok: true, message: 'Presupuesto actualizado correctamente' });
         } catch (error) {
-            console.log({ error: `Error al actualizar el presupuesto: ${error.message}` });
+            // console.log({ message: "Error al actualizar el presupuesto", error });
             
             res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' });
         }
@@ -66,7 +66,7 @@ export class BudgetController {
 
             res.status(200).json({ ok: true, message: 'Presupuesto eliminado correctamente' });
         } catch (error) {
-            console.log({ error: `Error al eliminar el presupuesto: ${error.message}` });
+            // console.log({ message: "Error al eliminar el presupuesto", error });
             
             res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' });
         }
