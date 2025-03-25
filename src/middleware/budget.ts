@@ -47,10 +47,8 @@ export const validateBudgetExists = async (req: Request, res: Response, next: Ne
 
         const budget = await Budget.findByPk(budgetId);
 
-        console.log(budget);
-
         if(!budget || budget.userId !== req.user.id) {
-            const error = new Error('Presupuesto no encontrado');
+            const error = new Error("Presupuesto no encontrado");
 
             res.status(404).json({ ok: false, message: error.message });
 
@@ -61,9 +59,8 @@ export const validateBudgetExists = async (req: Request, res: Response, next: Ne
 
         next();
     } catch (error) {
-        console.log({ error: `Error al obtener el presupuesto: ${error.mesage}` });
+        // console.log({ message: "Error al obtener el presupuesto" , error });
             
-        res.status(201).json({ ok: false, mesage: '!Ocurrio un error en el servidor!' })        
+        res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' })        
     }
-    
 }

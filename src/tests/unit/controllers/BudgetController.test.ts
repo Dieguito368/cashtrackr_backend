@@ -1,10 +1,10 @@
 import { createRequest, createResponse } from 'node-mocks-http';
-import { BudgetController } from '../../controllers/BudgetController';
-import Budget from '../../models/Budget';
-import Expense from '../../models/Expense';
-import { budgets } from '../mocks/budgets';
+import { BudgetController } from '../../../controllers/BudgetController';
+import Budget from '../../../models/Budget';
+import Expense from '../../../models/Expense';
+import { budgets } from '../../mocks/budgets';
 
-jest.mock('../../models/Budget', () => ({
+jest.mock('../../../models/Budget', () => ({
     findAll: jest.fn(),
     create: jest.fn(),
     findByPk: jest.fn()
@@ -82,6 +82,8 @@ describe("BudgetController.getALL", () => {
     });
 
     it("Should handle errors when fetching budgets", async () => {
+        (Budget.findAll as jest.Mock).mockRejectedValue(new Error);
+
         const req = createRequest({
             method: 'GET',
             url: '/api/budgets',
@@ -89,8 +91,6 @@ describe("BudgetController.getALL", () => {
         });
 
         const res = createResponse();
-
-        (Budget.findAll as jest.Mock).mockRejectedValue(new Error);
         
         await BudgetController.getAllBudgets(req, res);
 
@@ -236,6 +236,8 @@ describe("BudgetController.getById", () => {
     });
 
     it("Should handle errors when getting a budget for your ID", async () => {
+        (Budget.findByPk as jest.Mock).mockRejectedValue(new Error);
+
         const req = createRequest({
             method: 'GET',
             url: '/api/budgets/:budgetId',
@@ -244,8 +246,6 @@ describe("BudgetController.getById", () => {
 
         const res = createResponse();
 
-        (Budget.findByPk as jest.Mock).mockRejectedValue(new Error);
-        
         await BudgetController.getBudgetById(req, res);
 
         expect(res.statusCode).toBe(500);
@@ -285,7 +285,7 @@ describe("BudgetController.updateBudget", () => {
 
     it("Should handle errors when updating a budget", async () => {
         const mockBudget = {
-            update: jest.fn().mockRejectedValue(new Error)
+            update: jest.fn()
         };
 
         const req = createRequest({
@@ -299,6 +299,8 @@ describe("BudgetController.updateBudget", () => {
         });
 
         const res = createResponse();
+
+        mockBudget.update.mockRejectedValue(new Error);
 
         await BudgetController.updateBudget(req, res);
         
@@ -340,11 +342,10 @@ describe("BudgetController.deleteBudget", () => {
         const req = createRequest({
             method: 'DELETE',
             url: '/api/budgets/:budgetId',
-            user: mockBudget,
+            budget: mockBudget,
         });
 
         const res = createResponse();
-
 
         await BudgetController.deleteBudget(req, res);
         
