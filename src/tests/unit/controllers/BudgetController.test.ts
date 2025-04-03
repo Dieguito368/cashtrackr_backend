@@ -10,7 +10,7 @@ jest.mock('../../../models/Budget', () => ({
     findByPk: jest.fn()
 }));
 
-describe("BudgetController.getALL", () => {
+describe("BudgetController.getAllBudgets", () => {
     beforeEach(() => {
         (Budget.findAll as jest.Mock).mockReset();
     
@@ -95,24 +95,21 @@ describe("BudgetController.getALL", () => {
         await BudgetController.getAllBudgets(req, res);
 
         expect(res.statusCode).toBe(500);
-        expect(res._getJSONData()).toEqual({ ok: false, message: '!Ocurrió un error en el servidor!' });
+        expect(res._getJSONData()).toEqual({ ok: false, message: "¡Ocurrió un error en el servidor!" });
     });
 });
 
-describe("BudgetController.create", () => {
+describe("BudgetController.createBudget", () => {
     it("Should create a new budget", async () => {
         const mockBudget = {
-            save: jest.fn().mockResolvedValue(true)
+            save: jest.fn()
         };
 
         const req = createRequest({
             method: 'POST',
             url: '/api/budgets',
             user: { id: 1 },
-            body: {
-                name: "Presupuesto prueba",
-                amount: 1000
-            }
+            body: { name: "Budget TEST", amount: 1000 }
         });
 
         const res = createResponse();
@@ -152,13 +149,13 @@ describe("BudgetController.create", () => {
         await BudgetController.createBudget(req, res);
         
         expect(res.statusCode).toBe(500);
-        expect(res._getJSONData()).toEqual({ ok: false, message: '!Ocurrió un error en el servidor!' });
+        expect(res._getJSONData()).toEqual({ ok: false, message: '¡Ocurrió un error en el servidor!' });
         expect(mockBudget.save).not.toHaveBeenCalled();
         expect(Budget.create).toHaveBeenCalledWith(req.body);
     });
 });
 
-describe("BudgetController.getById", () => {
+describe("BudgetController.getBudgetById", () => {
     beforeEach(() => {
         (Budget.findByPk as jest.Mock).mockReset();
     
@@ -249,14 +246,14 @@ describe("BudgetController.getById", () => {
         await BudgetController.getBudgetById(req, res);
 
         expect(res.statusCode).toBe(500);
-        expect(res._getJSONData()).toEqual({ ok: false, message: '!Ocurrió un error en el servidor!' });
+        expect(res._getJSONData()).toEqual({ ok: false, message: '¡Ocurrió un error en el servidor!' });
     });
 });
 
 describe("BudgetController.updateBudget", () => {
     it("Should update the budget with ID 1", async () => {
         const mockBudget = {
-            update: jest.fn().mockResolvedValue(true)
+            update: jest.fn()
         }
 
         const req = createRequest({
@@ -285,7 +282,7 @@ describe("BudgetController.updateBudget", () => {
 
     it("Should handle errors when updating a budget", async () => {
         const mockBudget = {
-            update: jest.fn()
+            update: jest.fn().mockRejectedValue(new Error)
         };
 
         const req = createRequest({
@@ -300,19 +297,17 @@ describe("BudgetController.updateBudget", () => {
 
         const res = createResponse();
 
-        mockBudget.update.mockRejectedValue(new Error);
-
         await BudgetController.updateBudget(req, res);
         
         expect(res.statusCode).toBe(500);
-        expect(res._getJSONData()).toEqual({ ok: false, message: '!Ocurrió un error en el servidor!' });
+        expect(res._getJSONData()).toEqual({ ok: false, message: '¡Ocurrió un error en el servidor!' });
     });
 });
 
 describe("BudgetController.deleteBudget", () => {
     it("Should delete the budget with ID 1", async () => {
         const mockBudget = {
-            destroy: jest.fn().mockResolvedValue(true)
+            destroy: jest.fn()
         }
 
         const req = createRequest({
@@ -350,6 +345,6 @@ describe("BudgetController.deleteBudget", () => {
         await BudgetController.deleteBudget(req, res);
         
         expect(res.statusCode).toBe(500);
-        expect(res._getJSONData()).toEqual({ ok: false, message: '!Ocurrió un error en el servidor!' });
+        expect(res._getJSONData()).toEqual({ ok: false, message: "¡Ocurrió un error en el servidor!" });
     });
 });
