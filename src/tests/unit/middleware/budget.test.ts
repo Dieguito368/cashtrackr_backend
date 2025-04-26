@@ -1,6 +1,6 @@
 import { createRequest, createResponse } from "node-mocks-http";
 import { validateBudgetExists } from "../../../middleware/budget";
-import Budget from '../../../models/Budget';
+import Budget from "../../../models/Budget";
 import { budgets } from "../../mocks/budgets";
 
 jest.mock("../../../models/Budget", () => ({
@@ -61,7 +61,7 @@ describe("budget - validateBudgetExists", () => {
         await validateBudgetExists(req, res, next);
 
         expect(res.statusCode).toBe(500);
-        expect(res._getJSONData()).toEqual({ ok: false, message: '!Ocurrió un error en el servidor!' });
+        expect(res._getJSONData()).toEqual({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         expect(next).not.toHaveBeenCalled();
     });
 });

@@ -11,7 +11,7 @@ declare global {
 } 
 
 export const validateParameterExpenseId = async (req: Request, res: Response, next: NextFunction) =>  {
-    await param('expenseId').isInt({ min: 0 }).withMessage('ID de gasto no válido').run(req)
+    await param("expenseId").isInt({ min: 0 }).withMessage("ID de gasto no válido").run(req)
 
     let errors = validationResult(req);
         
@@ -24,12 +24,12 @@ export const validateParameterExpenseId = async (req: Request, res: Response, ne
 }
 
 export const validateBodyExpenseFields = async (req: Request, res: Response, next: NextFunction) => {
-    await body('name').notEmpty().withMessage('El nombre del gasto no puede ir vacio').run(req);
+    await body("name").notEmpty().withMessage("El nombre del gasto no puede ir vacio").run(req);
 
-    await body('amount')
-        .notEmpty().withMessage('La cantidad del gasto no puede ir vacio')
-        .isNumeric().withMessage('La cantidad del presupuesto debe ser un número')
-        .custom(value => value > 0).withMessage('La cantidad del presupuesto debe ser mayor a 0').run(req);
+    await body("amount")
+        .notEmpty().withMessage("La cantidad del gasto no puede ir vacio")
+        .isNumeric().withMessage("La cantidad del presupuesto debe ser un número")
+        .custom(value => value > 0).withMessage("La cantidad del presupuesto debe ser mayor a 0").run(req);
 
     let errors = validationResult(req);
         
@@ -47,8 +47,8 @@ export const validateExpenseExists = async (req: Request, res: Response, next: N
 
         const expense = await Expense.findByPk(expenseId);
 
-        if(!expense) {
-            const error = new Error('Gasto no encontrado');
+        if(!expense || expense.budgetId !== req.budget.id) {
+            const error = new Error("Gasto no encontrado");
 
             res.status(404).json({ ok: false, message: error.message });
 
@@ -59,9 +59,8 @@ export const validateExpenseExists = async (req: Request, res: Response, next: N
 
         next();
     } catch (error) {
-        console.log({ error: `Error al obtener el gasto: ${error.mesage}` });
+        // console.log({ message: "Error al obtener el gasto", error });
             
-        res.status(201).send({ ok: false, mesage: '!Ocurrio un error en el servidor!' })        
+        res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" })        
     }
-    
 }

@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { hashPassword, checkPassword } from '../utils/auth';
 import { generateToken } from '../utils/token';
@@ -10,17 +9,17 @@ import { sendErrorResponse } from '../utils';
 export class AuthController {
     static createAccount = async (req: Request, res: Response) => {
         try {
-            const user = new User(req.body);
-
             const userExists = await User.findOne({ where: { email: req.body.email } })
             
             if(userExists) {
-                const error = new Error('Ya existe una cuenta con ese Email');
+                const error = new Error("Ya existe una cuenta con ese Email");
 
                 res.status(409).json({ ok: false, message: error.message });
 
-                return
+                return;
             }
+
+            const user = await User.create(req.body);
 
             user.password = await hashPassword(req.body.password);
             user.token = generateToken();
@@ -35,9 +34,9 @@ export class AuthController {
 
             res.status(201).json({ ok: true, message: "Cuenta creada correctamente" });
         } catch (error) {
-            console.log({ message: 'Error al crear la cuenta del usuario', error });
+            console.log({ message: "Error al crear la cuenta del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
 
@@ -60,11 +59,11 @@ export class AuthController {
 
             await user.save();
 
-            res.status(200).json({ ok: true, message: 'Cuenta confirmada correctamente' });
+            res.status(200).json({ ok: true, message: "Cuenta confirmada correctamente" });
         } catch (error) {
-            console.log({ message: 'Error al confirmar la cuenta del usuario', error });
+            console.log({ message: "Error al confirmar la cuenta del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
 
@@ -102,9 +101,9 @@ export class AuthController {
 
             res.status(200).json({ ok: true, token: generateJWT(user.id) });
         } catch (error) {
-            console.log({ message: 'Error al loguear al usuario', error });
+            console.log({ message: "Error al loguear al usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
 
@@ -142,9 +141,9 @@ export class AuthController {
 
             res.status(200).json({ ok: true, message: "Revisa tu correo y restablece la contraseña" });
         } catch (error) {
-            console.log({ message: 'Error al recuperar la contraseña del usuario', error });
+            console.log({ message: "Error al recuperar la contraseña del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
     
@@ -164,9 +163,9 @@ export class AuthController {
 
             res.status(200).json({ ok: true, message: "Token válido" });
         } catch (error) {
-            console.log({ message: 'Error al recuperar la contraseña del usuario', error });
+            console.log({ message: "Error al recuperar la contraseña del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
 
@@ -192,9 +191,9 @@ export class AuthController {
 
             res.status(200).json({ ok: true, message: "Contraseña reseteada correctamente" });
         } catch (error) {
-            console.log({ message: 'Error al resetear la contraseña del usuario', error });
+            console.log({ message: "Error al resetear la contraseña del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
     
@@ -220,9 +219,9 @@ export class AuthController {
 
             res.status(200).json({ ok: true, user: "Contraseña actualizada correctamente" });
         } catch (error) {
-            console.log({ message: 'Error al actualizar la contraseña del usuario', error });
+            console.log({ message: "Error al actualizar la contraseña del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
 
@@ -232,7 +231,7 @@ export class AuthController {
 
             const user = await User.findByPk(req.user.id);
 
-            if(!user) sendErrorResponse(res, 401, 'No autorizado');
+            if(!user) sendErrorResponse(res, 401, "No autorizado");
 
             const isPasswordCorrect = await checkPassword(currentPassword, user.password);
 
@@ -240,9 +239,9 @@ export class AuthController {
 
             res.status(200).json({ ok: true, message: "La contraseña actual es correcta" });
         } catch (error) {
-            console.log({ message: 'Error al actualizar la contraseña del usuario', error });
+            console.log({ message: "Error al actualizar la contraseña del usuario", error });
             
-            res.status(500).json({ ok: false, message: '!Ocurrio un error en el servidor!' });
+            res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
     }
 }

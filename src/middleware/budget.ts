@@ -11,7 +11,7 @@ declare global {
 } 
 
 export const validateParameterBudgetId = async (req: Request, res: Response, next: NextFunction) =>  {
-    await param('budgetId').isInt({ min: 0 }).withMessage('ID de presupuesto no válido').run(req)
+    await param("budgetId").isInt({ min: 0 }).withMessage("ID de presupuesto no válido").run(req)
 
     let errors = validationResult(req);
         
@@ -24,12 +24,12 @@ export const validateParameterBudgetId = async (req: Request, res: Response, nex
 }
 
 export const validateBodyBudgetFields = async (req: Request, res: Response, next: NextFunction) => {
-    await body('name').notEmpty().withMessage('El nombre del presupuesto no puede ir vacio').run(req);
+    await body("name").notEmpty().withMessage("El nombre del presupuesto no puede ir vacio").run(req);
 
-    await body('amount')
-        .notEmpty().withMessage('La cantidad del presupuesto no puede ir vacio')
-        .isNumeric().withMessage('La cantidad del presupuesto debe ser un número')
-        .custom(value => value > 0).withMessage('La cantidad del presupuesto debe ser mayor a 0').run(req);
+    await body("amount")
+        .notEmpty().withMessage("La cantidad del presupuesto no puede ir vacio")
+        .isNumeric().withMessage("La cantidad del presupuesto debe ser un número")
+        .custom(value => value > 0).withMessage("La cantidad del presupuesto debe ser mayor a 0").run(req);
 
     let errors = validationResult(req);
         
@@ -61,6 +61,6 @@ export const validateBudgetExists = async (req: Request, res: Response, next: Ne
     } catch (error) {
         // console.log({ message: "Error al obtener el presupuesto" , error });
             
-        res.status(500).json({ ok: false, message: '!Ocurrió un error en el servidor!' })        
+        res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });        
     }
 }
