@@ -10,21 +10,18 @@ const db = new Sequelize(url, {
     dialect: "mysql",
     models: [ __dirname + '/../models/**/*' ],
     logging: false,
-    // dialectOptions: {
-    //     ssl: {
-    //         rejectUnauthorized: true
-    //     }
-    // }
 });
 
 export const connectDB = async () => {
     try {
         await db.authenticate();
         
-        db.sync();
+        await db.sync();
 
         console.log(colors.bgGreen.bold("Conexión exitosa a la BD"));
     } catch (error) {
         console.log(colors.bgRed(`Falló la conexión a la BD: ${error.message}`));
     }
 } 
+
+export default db;
