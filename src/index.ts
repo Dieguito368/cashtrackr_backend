@@ -1,3 +1,4 @@
+import "dotenv/config";
 import server from './server';
 import colors from 'colors';
 import { connectDB } from './config/db';
@@ -9,6 +10,5 @@ const startServer = async () => {
 
     server.listen(port, () => console.log(colors.bgCyan.bold(`Servidor funcionando en el puerto: ${port}`)));
 }
-
 
 startServer();

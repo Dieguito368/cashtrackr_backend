@@ -1,15 +1,12 @@
-import { Sequelize } from 'sequelize-typescript';
-import dotenv from 'dotenv';
-import colors from 'colors';
-
-dotenv.config();
+import { Sequelize } from "sequelize-typescript";
+import colors from "colors";
 
 const url = process.env.DATABASE_URL;
+
 const db = new Sequelize(url, {
-    host: "localhost",
-    dialect: "mysql",
-    models: [ __dirname + '/../models/**/*' ],
+    dialect: "postgres",
     logging: false,
+    models: [ __dirname + '/../models/**/*' ],
 });
 
 export const connectDB = async () => {

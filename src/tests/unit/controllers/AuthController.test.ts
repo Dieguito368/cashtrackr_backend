@@ -54,7 +54,7 @@ describe("AuthController.createAccount", () => {
             save: jest.fn()
         };
         
-        (User.create as jest.Mock).mockResolvedValue(mockUser);
+        (User.build as jest.Mock).mockReturnValue(mockUser);
         
         (hashPassword as jest.Mock).mockResolvedValue("hashedpassword");
 
@@ -66,8 +66,8 @@ describe("AuthController.createAccount", () => {
 
         const data = res._getJSONData();
 
-        expect(User.create).toHaveBeenCalledWith(req.body);
-        expect(User.create).toHaveBeenCalledTimes(1);
+        expect(User.build).toHaveBeenCalledWith(req.body);
+        expect(User.build).toHaveBeenCalledTimes(1);
         expect(mockUser.save).toHaveBeenCalled();
         expect(mockUser.password).toBe("hashedpassword");
         expect(mockUser.token).toBe("123456");
@@ -82,19 +82,6 @@ describe("AuthController.createAccount", () => {
         expect(data).toHaveProperty("ok", true);
         expect(data).not.toHaveProperty("ok", false);
         expect(data).toHaveProperty("message", "Cuenta creada correctamente");
-    });
-
-    // PENDIENTE
-    it("Error", async () => {
-        const req = createRequest({
-            method: "POST",
-            url: "/api/auth/create-account",
-            body: { email: "test@test.com", password: "test", name: "testname" }
-        });
-
-        const res = createResponse();
-
-        await AuthController.createAccount(req, res);
     });
 });
 

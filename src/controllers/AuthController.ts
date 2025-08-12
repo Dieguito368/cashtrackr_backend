@@ -19,10 +19,15 @@ export class AuthController {
                 return;
             }
 
-            const user = await User.create(req.body);
+            const user = User.build(req.body);
 
             user.password = await hashPassword(req.body.password);
-            user.token = generateToken();
+
+            const token = generateToken();
+            
+            user.token = token;
+
+            if(process.env.NODE_ENV !== "production") globalThis.cashTrackrConfirmationToken = token
 
             await AuthEmail.sendConfirmationEmail({
                 name: user.name,
@@ -34,7 +39,7 @@ export class AuthController {
 
             res.status(201).json({ ok: true, message: "Cuenta creada correctamente" });
         } catch (error) {
-            // console.log({ message: "Error al crear la cuenta del usuario", error });
+            console.log({ message: "Error al crear la cuenta del usuario", error });
             
             res.status(500).json({ ok: false, message: "¡Ocurrió un error en el servidor!" });
         }
